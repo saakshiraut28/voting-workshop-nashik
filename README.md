@@ -9,7 +9,7 @@ part 3- bankrun setup, write tests
 part 4- initialise candidate, write tests  
 part 5- vote, write tests  
 
-part 6- challenge (https://bit.ly/solwa)
+part 6- challenge (Join your respective city whatsapp group)
 
 Signup on - 
     1. [Superteam Earn](https://earn.superteam.fun)
