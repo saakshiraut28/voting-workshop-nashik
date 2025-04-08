@@ -175,6 +175,38 @@ export type Voting = {
           }
         },
         {
+          "name": "participant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  105,
+                  99,
+                  105,
+                  112,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "pollId"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -206,6 +238,19 @@ export type Voting = {
       ]
     },
     {
+      "name": "participant",
+      "discriminator": [
+        32,
+        142,
+        108,
+        79,
+        247,
+        179,
+        54,
+        6
+      ]
+    },
+    {
       "name": "poll",
       "discriminator": [
         110,
@@ -217,6 +262,13 @@ export type Voting = {
         153,
         111
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "alreadyVoted",
+      "msg": "You have already voted in this poll"
     }
   ],
   "types": [
@@ -232,6 +284,26 @@ export type Voting = {
           {
             "name": "candidateVotes",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "participant",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "pollId",
+            "type": "u64"
+          },
+          {
+            "name": "hasVoted",
+            "type": "bool"
           }
         ]
       }
