@@ -213,6 +213,13 @@
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "PollEndInPast",
+      "msg": "Poll end time cannot be in the past."
+    }
+  ],
   "types": [
     {
       "name": "Candidate",

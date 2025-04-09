@@ -219,6 +219,13 @@ export type Voting = {
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "pollEndInPast",
+      "msg": "Poll end time cannot be in the past."
+    }
+  ],
   "types": [
     {
       "name": "candidate",

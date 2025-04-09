@@ -25,7 +25,7 @@ describe("Voting", () => {
       new anchor.BN(1),
       "What is your favorite color?",
       new anchor.BN(100),
-      new anchor.BN(1739370789),
+      new anchor.BN(1744700218),
     ).rpc();
 
     const [pollAddress] = PublicKey.findProgramAddressSync(
@@ -40,6 +40,23 @@ describe("Voting", () => {
     expect(poll.pollId.toNumber()).toBe(1);
     expect(poll.description).toBe("What is your favorite color?");
     expect(poll.pollStart.toNumber()).toBe(100);
+  });
+
+  // Test to check if poll_end is in the past. It should FAIL as poll_end must be in the future.
+  it("fails if poll_end is less than current time", async () => {
+    const now = Math.floor(Date.now() / 1000);
+    try {
+      await votingProgram.methods.initializePoll(
+        new anchor.BN(2),
+        "Invalid end time test",
+        new anchor.BN(now + 100),         // start time in future
+        new anchor.BN(now - 1000),          // end time in the past
+      ).rpc();
+      throw new Error("Expected poll_end validation to fail");
+    } catch (err: any) {
+      console.log("Expected failure:", err.message);
+      expect(err.message).toMatch(/Poll end time cannot be in the past/);
+    }
   });
 
   it("initializes candidates", async () => {
