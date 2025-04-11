@@ -39,9 +39,18 @@ pub mod voting {
         Ok(())
     }
 
-    pub fn vote(ctx: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
+    pub fn vote(ctx: Context<Vote>, _candidate_name: String, poll_id: u64) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
+        let participant = &mut ctx.accounts.participant;
+
+        if participant.has_voted {
+          return Err(error!(VotingError::AlreadyVoted));
+        }
+
         candidate.candidate_votes += 1;
+        participant.has_voted = true;
+        participant.participant = ctx.accounts.signer.key();
+        participant.poll_id = poll_id;
 
         msg!("Voted for candidate: {}", candidate.candidate_name);
         msg!("Votes: {}", candidate.candidate_votes);
@@ -69,9 +78,25 @@ pub struct Vote<'info> {
     )]
     pub candidate: Account<'info, Candidate>,
 
+    #[account(
+        init,
+        payer = signer,
+        space = 8 + Participant::INIT_SPACE,
+        seeds = [b"participant", poll_id.to_le_bytes().as_ref(), signer.key().as_ref()],
+        bump
+    )]
+    pub participant: Account<'info, Participant>,
+
     pub system_program: Program<'info, System>,
 }
 
+#[account]
+#[derive(InitSpace)]
+pub struct Participant {
+    pub participant: Pubkey,
+    pub poll_id: u64,
+    pub has_voted: bool,
+}
 
 #[derive(Accounts)]
 #[instruction(candidate_name: String, poll_id: u64)]
@@ -136,4 +161,8 @@ pub struct Poll {
 pub enum CustomError {
     #[msg("Poll end time cannot be in the past.")]
     PollEndInPast,
+
+pub enum VotingError {
+    #[msg("You have already voted in this poll")]
+    AlreadyVoted,
 }
