@@ -1,6 +1,7 @@
 #![allow(clippy::result_large_err)]
 
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::clock::Clock;
 
 declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
 
@@ -13,6 +14,11 @@ pub mod voting {
                             description: String,
                             poll_start: u64,
                             poll_end: u64) -> Result<()> {
+        // get the current time
+        let clock = Clock::get()?;
+
+        // poll end time must be greater than current time. you cannot end a poll in the past.
+        require!(poll_end > clock.unix_timestamp as u64, CustomError::PollEndInPast);
 
         let poll = &mut ctx.accounts.poll;
         poll.poll_id = poll_id;
@@ -152,6 +158,10 @@ pub struct Poll {
 }
 
 #[error_code]
+pub enum CustomError {
+    #[msg("Poll end time cannot be in the past.")]
+    PollEndInPast,
+
 pub enum VotingError {
     #[msg("You have already voted in this poll")]
     AlreadyVoted,
