@@ -169,6 +169,38 @@
           }
         },
         {
+          "name": "participant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  105,
+                  99,
+                  105,
+                  112,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "poll_id"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -179,7 +211,7 @@
           "type": "string"
         },
         {
-          "name": "_poll_id",
+          "name": "poll_id",
           "type": "u64"
         }
       ]
@@ -200,6 +232,19 @@
       ]
     },
     {
+      "name": "Participant",
+      "discriminator": [
+        32,
+        142,
+        108,
+        79,
+        247,
+        179,
+        54,
+        6
+      ]
+    },
+    {
       "name": "Poll",
       "discriminator": [
         110,
@@ -211,6 +256,13 @@
         153,
         111
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AlreadyVoted",
+      "msg": "You have already voted in this poll"
     }
   ],
   "types": [
@@ -226,6 +278,26 @@
           {
             "name": "candidate_votes",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Participant",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "poll_id",
+            "type": "u64"
+          },
+          {
+            "name": "has_voted",
+            "type": "bool"
           }
         ]
       }
