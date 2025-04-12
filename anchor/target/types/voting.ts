@@ -330,11 +330,11 @@ export type Voting = {
             "type": "u64"
           },
           {
-            "name": "pollVotes",
+            "name": "candidateAmount",
             "type": "u64"
           },
           {
-            "name": "candidateAmount",
+            "name": "pollVotes",
             "type": "u64"
           }
         ]

@@ -158,8 +158,8 @@ pub struct Poll {
     pub description: String,
     pub poll_start: u64,
     pub poll_end: u64,
-    pub poll_votes: u64, // Total Votes for poll
     pub candidate_amount: u64,
+    pub poll_votes: u64, // Total Votes for poll
 }
 
 #[error_code]

@@ -108,6 +108,15 @@ describe("Voting", () => {
     expect(pinkCandidate.candidateVotes.toNumber()).toBe(1);
     expect(pinkCandidate.candidateName).toBe("Pink");
 
+    // Check if the total poll votes has been updated
+    const [pollAddress] = PublicKey.findProgramAddressSync(
+      [new anchor.BN(1).toArrayLike(Buffer, "le", 8)],
+      votingProgram.programId,
+    );
+    const poll = await votingProgram.account.poll.fetch(pollAddress);
+    console.log(poll);
+    expect(poll.pollId.toNumber()).toBe(1);
+
     // const [blueAddress] = PublicKey.findProgramAddressSync(
     //   [new anchor.BN(1).toArrayLike(Buffer, "le", 8), Buffer.from("Blue")],
     //   votingProgram.programId,
@@ -117,4 +126,5 @@ describe("Voting", () => {
     // expect(blueCandidate.candidateVotes.toNumber()).toBe(1);
     // expect(blueCandidate.candidateName).toBe("Blue");
   });
+
 });

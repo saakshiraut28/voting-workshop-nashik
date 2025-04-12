@@ -324,11 +324,11 @@
             "type": "u64"
           },
           {
-            "name": "poll_votes",
+            "name": "candidate_amount",
             "type": "u64"
           },
           {
-            "name": "candidate_amount",
+            "name": "poll_votes",
             "type": "u64"
           }
         ]
