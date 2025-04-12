@@ -261,8 +261,6 @@
   "errors": [
     {
       "code": 6000,
-      "name": "PollEndInPast",
-      "msg": "Poll end time cannot be in the past."
       "name": "AlreadyVoted",
       "msg": "You have already voted in this poll"
     }
@@ -323,6 +321,10 @@
           },
           {
             "name": "poll_end",
+            "type": "u64"
+          },
+          {
+            "name": "poll_votes",
             "type": "u64"
           },
           {

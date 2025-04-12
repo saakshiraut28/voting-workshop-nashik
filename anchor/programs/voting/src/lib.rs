@@ -25,6 +25,7 @@ pub mod voting {
         poll.description = description;
         poll.poll_start = poll_start;
         poll.poll_end = poll_end;
+        poll.poll_votes = 0; // Total Votes for poll will be 0 on initialization
         poll.candidate_amount = 0;
         Ok(())
     }
@@ -34,6 +35,7 @@ pub mod voting {
                                 _poll_id: u64
                             ) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
+
         candidate.candidate_name = candidate_name;
         candidate.candidate_votes = 0;
         Ok(())
@@ -42,12 +44,14 @@ pub mod voting {
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, poll_id: u64) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
         let participant = &mut ctx.accounts.participant;
+        let poll = &mut ctx.accounts.poll;
 
         if participant.has_voted {
           return Err(error!(VotingError::AlreadyVoted));
         }
 
         candidate.candidate_votes += 1;
+        poll.poll_votes += 1; // update the total votes for the poll on each vote
         participant.has_voted = true;
         participant.participant = ctx.accounts.signer.key();
         participant.poll_id = poll_id;
@@ -154,6 +158,7 @@ pub struct Poll {
     pub description: String,
     pub poll_start: u64,
     pub poll_end: u64,
+    pub poll_votes: u64, // Total Votes for poll
     pub candidate_amount: u64,
 }
 
@@ -161,7 +166,9 @@ pub struct Poll {
 pub enum CustomError {
     #[msg("Poll end time cannot be in the past.")]
     PollEndInPast,
+}
 
+#[error_code]
 pub enum VotingError {
     #[msg("You have already voted in this poll")]
     AlreadyVoted,

@@ -267,8 +267,6 @@ export type Voting = {
   "errors": [
     {
       "code": 6000,
-      "name": "pollEndInPast",
-      "msg": "Poll end time cannot be in the past."
       "name": "alreadyVoted",
       "msg": "You have already voted in this poll"
     }
@@ -329,6 +327,10 @@ export type Voting = {
           },
           {
             "name": "pollEnd",
+            "type": "u64"
+          },
+          {
+            "name": "pollVotes",
             "type": "u64"
           },
           {
