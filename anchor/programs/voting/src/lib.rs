@@ -34,8 +34,13 @@ pub mod voting {
                                 _poll_id: u64
                             ) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
+        let poll = &mut ctx.accounts.poll;
+        
         candidate.candidate_name = candidate_name;
         candidate.candidate_votes = 0;
+        
+        // update the poll with the candidate amount
+        poll.candidate_amount += 1;
         Ok(())
     }
 
@@ -161,7 +166,9 @@ pub struct Poll {
 pub enum CustomError {
     #[msg("Poll end time cannot be in the past.")]
     PollEndInPast,
+}
 
+#[error_code]
 pub enum VotingError {
     #[msg("You have already voted in this poll")]
     AlreadyVoted,
