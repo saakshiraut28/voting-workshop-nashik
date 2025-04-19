@@ -125,4 +125,55 @@ describe("Voting", () => {
     // expect(blueCandidate.candidateVotes.toNumber()).toBe(1);
     // expect(blueCandidate.candidateName).toBe("Blue");
   });
+
+  // Test if Poll is not started
+  it("fails to vote before poll start time", async () => {
+    const now = Math.floor(Date.now() / 1000);
+    await votingProgram.methods
+      .initializePoll(
+        new anchor.BN(3),
+        "What is your favorite fruit?",
+        new anchor.BN(now + 10000), // future start time
+        new anchor.BN(now + 20000) // future end time
+      )
+      .rpc();
+
+    await votingProgram.methods
+      .initializeCandidate("Mango", new anchor.BN(3))
+      .rpc();
+
+    try {
+      await votingProgram.methods.vote("Mango", new anchor.BN(3)).rpc();
+      throw new Error("Poll is not started yet, expected error not thrown");
+    } catch (err: any) {
+      console.log("Expected failure:", err.message);
+      expect(err.message).toMatch(/Poll is not started yet/);
+    }
+  });
+
+  // Test if Poll is already ended
+  it("fails to vote after poll end time", async () => {
+    const now = Math.floor(Date.now() / 1000);
+    await votingProgram.methods
+      .initializePoll(
+        new anchor.BN(4),
+        "What color is the sky?",
+        new anchor.BN(now - 10000),
+        new anchor.BN(now + 10) // keeping a very short time so that the poll ends quickly
+      )
+      .rpc();
+
+    await votingProgram.methods
+      .initializeCandidate("Blue", new anchor.BN(4))
+      .rpc();
+
+    try {
+      await votingProgram.methods.vote("Blue", new anchor.BN(4)).rpc();
+      throw new Error("Poll is already ended, expected error not thrown");
+    } catch (err: any) {
+      console.log("Expected failure:", err.message);
+      expect(err.message).toMatch(/Poll is already ended/);
+    }
+  });
+
 });
