@@ -46,6 +46,16 @@ Ok(())
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, poll_id: u64) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
         let participant = &mut ctx.accounts.participant;
+        let poll = &ctx.accounts.poll;
+
+        // get the current time
+        let clock = Clock::get()?;
+
+        // check if the poll is active. (poll_start < current_time)
+        require!(poll.poll_start < clock.unix_timestamp as u64, CustomError::PollIsNotActive);
+
+        // check if the poll is not ended (poll_end > current_time)
+        require!(poll.poll_end > clock.unix_timestamp as u64, CustomError::PollIsExpired);
 
         if participant.has_voted {
           return Err(error!(VotingError::AlreadyVoted));
@@ -165,7 +175,13 @@ pub struct Poll {
 pub enum CustomError {
     #[msg("Poll end time cannot be in the past.")]
     PollEndInPast,
-} 
+    #[msg("Poll is not started yet.")]
+    PollIsNotActive,
+    #[msg("Poll is expired.")]
+    PollIsExpired
+}
+
+#[error_code]
 pub enum VotingError {
     #[msg("You have already voted in this poll")]
     AlreadyVoted,
