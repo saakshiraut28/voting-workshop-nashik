@@ -34,17 +34,33 @@ pub mod voting {
                                 candidate_name: String,
                                 _poll_id: u64
                             ) -> Result<()> {
-        let candidate = &mut ctx.accounts.candidate;
+        candidate_name: String,
+        _poll_id: u64
+    ) -> Result<()> {
+    let candidate = &mut ctx.accounts.candidate;
+    let poll = &mut ctx.accounts.poll;
 
-        candidate.candidate_name = candidate_name;
-        candidate.candidate_votes = 0;
-        Ok(())
-    }
+    candidate.candidate_name = candidate_name;
+    candidate.candidate_votes = 0;
+    poll.candidate_amount += 1; // Increment candidate count
+
+Ok(())
+}
 
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, poll_id: u64) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
         let participant = &mut ctx.accounts.participant;
         let poll = &mut ctx.accounts.poll;
+        let poll = &ctx.accounts.poll;
+
+        // get the current time
+        let clock = Clock::get()?;
+
+        // check if the poll is active. (poll_start < current_time)
+        require!(poll.poll_start < clock.unix_timestamp as u64, CustomError::PollIsNotActive);
+
+        // check if the poll is not ended (poll_end > current_time)
+        require!(poll.poll_end > clock.unix_timestamp as u64, CustomError::PollIsExpired);
 
         if participant.has_voted {
           return Err(error!(VotingError::AlreadyVoted));
@@ -166,6 +182,10 @@ pub struct Poll {
 pub enum CustomError {
     #[msg("Poll end time cannot be in the past.")]
     PollEndInPast,
+    #[msg("Poll is not started yet.")]
+    PollIsNotActive,
+    #[msg("Poll is expired.")]
+    PollIsExpired
 }
 
 #[error_code]

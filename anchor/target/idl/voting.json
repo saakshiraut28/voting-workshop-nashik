@@ -263,6 +263,18 @@
       "code": 6000,
       "name": "AlreadyVoted",
       "msg": "You have already voted in this poll"
+      "name": "PollEndInPast",
+      "msg": "Poll end time cannot be in the past."
+    },
+    {
+      "code": 6001,
+      "name": "PollIsNotActive",
+      "msg": "Poll is not started yet."
+    },
+    {
+      "code": 6002,
+      "name": "PollIsExpired",
+      "msg": "Poll is expired."
     }
   ],
   "types": [

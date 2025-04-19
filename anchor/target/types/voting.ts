@@ -269,6 +269,18 @@ export type Voting = {
       "code": 6000,
       "name": "alreadyVoted",
       "msg": "You have already voted in this poll"
+      "name": "pollEndInPast",
+      "msg": "Poll end time cannot be in the past."
+    },
+    {
+      "code": 6001,
+      "name": "pollIsNotActive",
+      "msg": "Poll is not started yet."
+    },
+    {
+      "code": 6002,
+      "name": "pollIsExpired",
+      "msg": "Poll is expired."
     }
   ],
   "types": [
