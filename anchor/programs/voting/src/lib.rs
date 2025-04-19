@@ -30,14 +30,18 @@ pub mod voting {
     }
 
     pub fn initialize_candidate(ctx: Context<InitializeCandidate>, 
-                                candidate_name: String,
-                                _poll_id: u64
-                            ) -> Result<()> {
-        let candidate = &mut ctx.accounts.candidate;
-        candidate.candidate_name = candidate_name;
-        candidate.candidate_votes = 0;
-        Ok(())
-    }
+        candidate_name: String,
+        _poll_id: u64
+    ) -> Result<()> {
+    let candidate = &mut ctx.accounts.candidate;
+    let poll = &mut ctx.accounts.poll;
+
+    candidate.candidate_name = candidate_name;
+    candidate.candidate_votes = 0;
+    poll.candidate_amount += 1; // Increment candidate count
+
+Ok(())
+}
 
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, poll_id: u64) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
